@@ -180,3 +180,66 @@ Always name mappedBy exactly as the field in the owning side.
 Think “who has the foreign key or join table column?” → that’s the owning side.
 Cascade types usually go on the owning side if you want saving/deleting to propagate.
 ```
+## 📝 Rule of Thumb for Relationship Updates in JPA/Hibernate
+```plaintext
+1. ManyToOne / OneToMany (e.g. Course ↔ Teacher)
+
+Owning side: @ManyToOne (Course.teacher)
+
+Inverse side: @OneToMany(mappedBy = "teacher") (Teacher.courses)
+
+✅ To persist correctly:
+You must set the owning side → course.setTeacher(teacher)
+
+✅ To keep memory consistent:
+Also update the inverse side (teacher.getCourses().add(course)) → best handled by teacher.addCourse(course).
+
+👉 Use the helper method on the One side (Teacher).
+```
+
+```plaintext
+2. ManyToMany (e.g. Student ↔ Course)
+
+Owning side: The side with @JoinTable → Student.courses
+
+Inverse side: Course.students (mappedBy = "courses")
+
+✅ To persist correctly:
+You must update the owning side → student.getCourses().add(course)
+
+✅ To keep memory consistent:
+Also update the inverse side (course.getStudents().add(student)) → best handled by student.addCourse(course).
+
+👉 Use the helper method on the owning side (Student).
+```
+
+```plaintext
+3. OneToOne
+
+Owning side: The one with the foreign key (@JoinColumn)
+
+Inverse side: The one with mappedBy
+
+✅ To persist correctly:
+Set the owning side.
+
+✅ For consistency:
+Use a helper to set both. Example:
+```
+```java
+public void setPassport(Passport passport) {
+    this.passport = passport;
+    if (passport != null) {
+        passport.setStudent(this);
+    }
+}
+```
+
+## 🔑 Quick Cheatsheet
+```plaintext
+Always set the owning side → persistence requires it.
+
+Use helper methods → keeps both sides in sync in memory.
+
+Define helpers on the aggregate root / “parent” entity (usually the One side in OneToMany, or the side with @JoinTable in ManyToMany).
+```

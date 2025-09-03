@@ -12,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "courses")
+@EqualsAndHashCode(exclude = "courses")
 @Entity
 public class Student {
     @Id

@@ -12,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-
+@ToString(exclude = "courses")
+@EqualsAndHashCode(exclude = "courses")
 @Entity
 public class Teacher {
     @Id
@@ -24,7 +24,7 @@ public class Teacher {
     private String name;
     private String zoom;
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Course> courses = new HashSet<>();
 
     public Teacher(String email, String name, String zoom) {

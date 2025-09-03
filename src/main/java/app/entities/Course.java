@@ -12,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-
+@ToString(exclude = "students")
+@EqualsAndHashCode(exclude = "students")
 @Entity
 public class Course {
     @Id
@@ -33,7 +33,7 @@ public class Course {
         this.teacher = teacher;
     }
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses",  fetch = FetchType.EAGER)
     private Set<Student> students = new HashSet<>();
 
     @ManyToOne
