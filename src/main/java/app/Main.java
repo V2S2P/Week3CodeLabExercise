@@ -10,6 +10,9 @@ import app.entities.Student;
 import app.entities.Teacher;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -64,6 +67,31 @@ public class Main {
             System.out.println("All teachers: " + teacherDAO.getAll());
             System.out.println("All students: " + studentDAO.getAll());
             System.out.println("All courses: " + courseDAO.getAll());
+
+            // JPQL Queries
+            // Get all students that are attending a specific course
+            TypedQuery<Student> q1 = em.createQuery("SELECT s FROM Student s JOIN s.courses c WHERE c.id = :courseId", Student.class);
+            q1.setParameter("courseId", c1.getId());
+            List<Student> students = q1.getResultList();
+            System.out.println("Students in course " + c1.getCourseName() + ": " + students);
+
+            // Get all courses that a specific student is attending
+            TypedQuery<Course> q2 = em.createQuery("SELECT c FROM Course c JOIN c.students s WHERE s.id = :studentId", Course.class);
+            q2.setParameter("studentId", s1.getId());
+            List<Course> coursesOfs1 = q2.getResultList();
+            System.out.println("Courses attended by " + s1.getName() + ": " + coursesOfs1);
+
+            // Get all courses that a specific teacher is teaching
+            TypedQuery<Course> q3 = em.createQuery("SELECT c FROM Course c JOIN c.teacher t WHERE t.id = :teacherId", Course.class);
+            q3.setParameter("teacherId", t1.getId());
+            List<Course> coursesOfs2 = q3.getResultList();
+            System.out.println("Courses taught by " + t1.getName() + ": " + coursesOfs2);
+
+            // Get all students that are attending a course that a specific teacher is teaching
+            TypedQuery<Student> q4 = em.createQuery("SELECT DISTINCT s FROM Student s JOIN s.courses c WHERE c.teacher.id = :teacherId", Student.class);
+            q4.setParameter("teacherId", t1.getId());
+            List<Student> students2 = q4.getResultList();
+            System.out.println("Students taught by " + t1.getName() + ": " + students2);
         }
     }
 }
