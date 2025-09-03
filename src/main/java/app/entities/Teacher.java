@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode
+
 @Entity
 public class Teacher {
     @Id
